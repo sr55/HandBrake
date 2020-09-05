@@ -8,6 +8,10 @@ clone_depth: 1
 
 image: Ubuntu2004
 
+skip_branch_with_pr: true
+max_jobs: 1
+# skip_non_tags: true
+
 environment:
   matrix:
   - job_name: Build
@@ -28,13 +32,11 @@ for:
         - cd /home/appveyor/
         - wget https://github.com/bradleysepos/mingw-w64-build/releases/download/9.1.0/mingw-w64-toolchain-9.1.0-linux-x86_64.tar.gz
         - tar xvf mingw-w64-toolchain-9.1.0-linux-x86_64.tar.gz
-        - export PATH="/home/appveyor/toolchains/mingw-w64-x86_64/bin:${PATH}"
+        - export PATH="/home/appveyor/mingw-w64-toolchain-9.1.0-linux-x86_64/mingw-w64-x86_64/bin:${PATH}"
         - cd /home/appveyor/projects/handbrake
-        - ./configure --cross=x86_64-w64-mingw32 --enable-qsv --enable-vce --enable-nvenc --launch-jobs=$(nproc) --launch
+        - ./configure --cross=x86_64-w64-mingw32 --harden --launch-jobs=$(nproc) --launch
         - cd build
         - make pkg.create.zip
     artifacts:
         - path: /home/appveyor/projects/handbrake/build/libhb/hb.dll
           name: LibHandBrake
-
-   
