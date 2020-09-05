@@ -19,6 +19,7 @@ for:
         - job_name: Build
           image: Ubuntu2004
     build_script:
+        - sudo apt-get update -y
         - sudo apt-get install -y automake autoconf build-essential cmake curl gcc git intltool libtool libtool-bin m4 make nasm patch pkg-config python tar yasm zlib1g-dev ninja-build zip
         - sudo apt-get install -y bison bzip2 flex g++ gzip pax
         - sudo apt-get install -y python3-pip
