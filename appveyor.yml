@@ -1,7 +1,12 @@
+version: 1.4.0
+
+branches:
+  only:
+  - appveyor2
+  
 clone_depth: 1
+
 image: Ubuntu2004
-test: off
-deploy: off
 
 environment:
   matrix:
@@ -16,7 +21,7 @@ for:
     matrix:
       only:
         - job_name: Build
-          image: Ubuntu
+          image: Ubuntu2004
           build_script:
           - sh: >-
             sudo apt-get install automake autoconf build-essential cmake curl gcc git intltool libtool libtool-bin m4 make nasm patch pkg-config python tar yasm zlib1g-dev ninja-build zip
