@@ -16,6 +16,9 @@ environment:
   matrix:
   - job_name: Build
     
+  - job_name: BuildGUI
+    job_depends_on: Build   
+    
 for:
  -
     matrix:
@@ -23,16 +26,9 @@ for:
         - job_name: Build
           image: Ubuntu2004
     build_script:
-        - sudo apt-get update -y
-        - sudo apt-get install -y automake autoconf build-essential cmake curl gcc git intltool libtool libtool-bin m4 make nasm patch pkg-config python tar yasm zlib1g-dev ninja-build zip
-        - sudo apt-get install -y bison bzip2 flex g++ gzip pax
-        - sudo apt-get install -y python3-pip
-        - sudo apt-get install -y python3-setuptools
-        - sudo pip3 install meson
-        - cd /home/appveyor/
-        - wget https://github.com/bradleysepos/mingw-w64-build/releases/download/9.1.0/mingw-w64-toolchain-9.1.0-linux-x86_64.tar.gz
-        - tar xvf mingw-w64-toolchain-9.1.0-linux-x86_64.tar.gz
-        - export PATH="/home/appveyor/mingw-w64-toolchain-9.1.0-linux-x86_64/mingw-w64-x86_64/bin:${PATH}"
+        - chmod 755 win/appveyor_setup.sh
+        - ./win/appveyor_setup.sh
+        - export PATH="/home/appveyor/toolchains/mingw-w64-toolchain-9.1.0-linux-x86_64/mingw-w64-x86_64/bin:${PATH}"
         - cd /home/appveyor/projects/handbrake
         - ./configure --cross=x86_64-w64-mingw32 --harden --launch-jobs=$(nproc) --launch
         - cd build
@@ -40,3 +36,13 @@ for:
     artifacts:
         - path: /home/appveyor/projects/handbrake/build/libhb/hb.dll
           name: LibHandBrake
+-
+    matrix:
+      only:
+        - job_name: BuildGUI
+    image: Visual Studio 2019
+    build_script:
+        -  msbuild win\cs\build.xml /t:Nightly
+    artifacts:
+        - path: /home/appveyor/projects/handbrake/win/CS/HandBrakeWPF/bin/**/*
+          name: HandBrakeGUI
