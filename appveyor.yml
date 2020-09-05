@@ -10,19 +10,15 @@ image: Ubuntu2004
 
 environment:
   matrix:
-
   - job_name: Build
     
-  - job_name: BuildGUI
-    job_depends_on: Build   
-
 for:
-    -
+ -
     matrix:
       only:
         - job_name: Build
           image: Ubuntu2004
-          build_script:
+    build_script:
           - sh: >-
             sudo apt-get install automake autoconf build-essential cmake curl gcc git intltool libtool libtool-bin m4 make nasm patch pkg-config python tar yasm zlib1g-dev ninja-build zip
             sudo apt-get install bison bzip2 flex g++ gzip pax
@@ -41,11 +37,4 @@ for:
             - path: /home/appveyor/projects/handbrake/build/libhb/hb.dll
               name: LibHandBrake
 
-    -
-    matrix:
-      only:
-        - job_name: BuildGUI
-          image: Visual Studio 2019
-          build_script:
-            -  msbuild win\cs\build.xml /t:Nightly
-
+   
