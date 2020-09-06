@@ -34,9 +34,9 @@ for:
         - cd build
         - make pkg.create.zip
     artifacts:
-        - path: /home/appveyor/projects/handbrake/build/libhb/hb.dll
+        - path: /home/appveyor/projects/handbrake/build/pkg/*.zip
           name: LibHandBrake
--
+ -
     matrix:
       only:
         - job_name: BuildGUI
