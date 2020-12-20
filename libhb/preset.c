@@ -211,7 +211,6 @@ static int preset_hw_scrub(hb_value_t *preset)
 
 static int do_preset_hw_scrub(hb_value_t *preset, preset_do_context_t *do_ctx)
 {
-    preset_scrub_context_t *ctx = (preset_scrub_context_t*)do_ctx;
     preset_hw_scrub(preset);
     return PRESET_DO_NEXT;
 }

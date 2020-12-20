@@ -17,24 +17,6 @@
 
 static int is_nvenc_available = -1;
 
-int hb_nvenc_h264_available()
-{
-    #if HB_PROJECT_FEATURE_NVENC
-        return hb_check_nvenc_available();
-    #else
-        return 0;
-    #endif
-}
-
-int hb_nvenc_h265_available()
-{
-    #if HB_PROJECT_FEATURE_NVENC
-        return hb_check_nvenc_available();
-    #else
-        return 0;
-    #endif
-}
-
 int hb_check_nvenc_available()
 {
     if (is_hardware_disabled())
@@ -68,6 +50,24 @@ int hb_check_nvenc_available()
         }
 
         return 1;
+    #else
+        return 0;
+    #endif
+}
+
+int hb_nvenc_h264_available()
+{
+    #if HB_PROJECT_FEATURE_NVENC
+        return hb_check_nvenc_available();
+    #else
+        return 0;
+    #endif
+}
+
+int hb_nvenc_h265_available()
+{
+    #if HB_PROJECT_FEATURE_NVENC
+        return hb_check_nvenc_available();
     #else
         return 0;
     #endif
