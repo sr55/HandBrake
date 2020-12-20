@@ -1,59 +1,59 @@
 $(eval $(call import.MODULE.rules,CLI))
 
-build: cli.build
-install: cli.install
-install-strip: cli.install-strip
-uninstall: cli.uninstall
-clean: cli.clean
-xclean: cli.xclean
+build: CLI.build
+install: CLI.install
+install-strip: CLI.install-strip
+uninstall: CLI.uninstall
+clean: CLI.clean
+xclean: CLI.xclean
 
-cli.build: $(CLI.exe)
+CLI.build: $(CLI.exe)
 ifeq (1,$(FEATURE.flatpak))
-cli.build: $(CLI.metainfo)
+CLI.build: $(CLI.metainfo)
 endif
 
 ########################################
 # sync with ../macosx/module.rules     #
 ########################################
-cli.install-strip: | $(dir $(CLI.install.exe))
-    $(CP.exe) $(CLI.exe) $(CLI.install.exe)
-    $(STRIP.exe) $(CLI.install.exe)
+CLI.install-strip: | $(dir $(CLI.install.exe))
+	$(CP.exe) $(CLI.exe) $(CLI.install.exe)
+	$(STRIP.exe) $(CLI.install.exe)
 
 ifeq (1,$(FEATURE.flatpak))
 $(CLI.metainfo): $(CLI.metainfo.template)
-    sed -e 's^RELEASE_TAG^<release version="$(HB.version)" date="$(word 1,$(HB.repo.date))" />^' $< > $@
+	sed -e 's^RELEASE_TAG^<release version="$(HB.version)" date="$(word 1,$(HB.repo.date))" />^' $< > $@
 
 $(CLI.install.metainfo): $(CLI.metainfo)
-cli.install: | $(dir $(CLI.install.metainfo))
+CLI.install: | $(dir $(CLI.install.metainfo))
 endif
 
-cli.install: | $(dir $(CLI.install.exe))
-    $(CP.exe) $(CLI.exe) $(CLI.install.exe)
+CLI.install: | $(dir $(CLI.install.exe))
+	$(CP.exe) $(CLI.exe) $(CLI.install.exe)
 ifeq (1,$(FEATURE.flatpak))
-    $(CP.exe) $(CLI.metainfo) $(CLI.install.metainfo)
+	$(CP.exe) $(CLI.metainfo) $(CLI.install.metainfo)
 endif
 
-cli.uninstall:
-    $(RM.exe) -f $(CLI.install.exe)
+CLI.uninstall:
+	$(RM.exe) -f $(CLI.install.exe)
 
-cli.clean:
-    $(RM.exe) -f $(CLI.out)
+CLI.clean:
+	$(RM.exe) -f $(CLI.out)
 
-cli.xclean: cli.clean
+CLI.xclean: CLI.clean
 ########################################
 
 $(CLI.exe): | $(dir $(CLI.exe))
 $(CLI.exe): $(CLI.c.o)
-    $(call CLI.GCC.EXE++,$@,$^ $(CLI.libs))
+	$(call CLI.GCC.EXE++,$@,$^ $(CLI.libs))
 ifeq (none,$(FFMPEG.GCC.g))
 ifeq (1-mingw,$(HOST.cross)-$(HOST.system))
-    $(STRIP.exe) -s $(CLI.exe)
+	$(STRIP.exe) -s $(CLI.exe)
 else
-    $(STRIP.exe) $(CLI.exe)
+	$(STRIP.exe) $(CLI.exe)
 endif
 endif
 
 $(CLI.c.o): $(LIBHB.a)
 $(CLI.c.o): | $(dir $(CLI.c.o))
 $(CLI.c.o): $(BUILD/)%.o: $(SRC/)%.c
-    $(call CLI.GCC.C_O,$@,$<)
+	$(call CLI.GCC.C_O,$@,$<)

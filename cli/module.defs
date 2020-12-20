@@ -1,4 +1,4 @@
-$(eval $(call import.MODULE.defs,CLI,cli,LIBHB))
+$(eval $(call import.MODULE.defs,CLI,CLI,LIBHB))
 $(eval $(call import.GCC,CLI))
 
 CLI.src/   = $(SRC/)cli/
