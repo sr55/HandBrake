@@ -27,6 +27,7 @@
 #endif
 
 #include "handbrake/handbrake.h"
+#include "options.h"
 
  /****************************************************************************
  * ShowPresets:

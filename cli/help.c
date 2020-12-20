@@ -26,7 +26,7 @@
 #endif
 
 #include "handbrake/handbrake.h"
-#include "help.h"
+#include "options.h"
 
 /****************************************************************************
  * ShowHelp:
