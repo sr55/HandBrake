@@ -1,0 +1,95 @@
+$(eval $(call import.MODULE.defs,CLI,cli,LIBHB))
+$(eval $(call import.GCC,CLI))
+
+CLI.src/   = $(SRC/)cli/
+CLI.build/ = $(BUILD/)cli/
+
+CLI.c   = $(wildcard $(CLI.src/)*.c)
+CLI.c.o = $(patsubst $(SRC/)%.c,$(BUILD/)%.o,$(CLI.c))
+
+CLI.exe = $(BUILD/)$(call TARGET.exe,$(HB.name)CLI)
+
+CLI.GCC.L = $(CONTRIB.build/)lib
+
+CLI.libs = $(LIBHB.a)
+
+CLI.GCC.l = \
+        ass avformat avfilter avcodec avutil swresample postproc mp3lame dvdnav \
+        dvdread fribidi swscale vpx theoraenc theoradec vorbis vorbisenc ogg \
+        x264 bluray freetype xml2 bz2 z jansson harfbuzz opus speex lzma dav1d \
+        turbojpeg
+
+ifeq (,$(filter $(HOST.system),darwin cygwin mingw))
+    CLI.GCC.l += fontconfig
+endif
+
+ifeq (1,$(FEATURE.qsv))
+    CLI.GCC.l += mfx
+ifneq (,$(filter $(HOST.system),linux freebsd))
+    CLI.GCC.l += va va-drm
+endif
+endif
+
+ifeq (1,$(FEATURE.flatpak))
+    CLI.GCC.l += glib-2.0
+endif
+
+CLI.GCC.l += $(foreach m,$(MODULES.NAMES),$($m.OSL.libs))
+
+CLI.install.exe = $(DESTDIR)$(PREFIX/)bin/$(notdir $(CLI.exe))
+ifeq (1,$(FEATURE.flatpak))
+    CLI.metainfo.template = $(CLI.src/)fr.handbrake.HandBrakeCLI.metainfo.xml.template
+    CLI.metainfo = $(CLI.build/)fr.handbrake.HandBrakeCLI.metainfo.xml
+    CLI.install.metainfo = $(DESTDIR)$(PREFIX/)share/metainfo/$(notdir $(CLI.metainfo))
+endif
+
+###############################################################################
+
+CLI.out += $(CLI.c.o)
+CLI.out += $(CLI.exe)
+ifeq (1,$(FEATURE.flatpak))
+    CLI.out += $(CLI.metainfo)
+endif
+
+BUILD.out += $(CLI.out)
+BUILD.out += $(CLI.install.exe)
+ifeq (1,$(FEATURE.flatpak))
+    BUILD.out += $(CLI.install.metainfo)
+endif
+
+###############################################################################
+
+CLI.GCC.I += $(LIBHB.GCC.I)
+
+ifeq ($(HOST.system),darwin)
+    CLI.GCC.f += IOKit CoreServices CoreText CoreGraphics AudioToolbox VideoToolbox CoreMedia CoreVideo Foundation
+    CLI.GCC.l += iconv
+else ifeq ($(HOST.system),linux)
+    CLI.GCC.l += pthread dl m
+ifeq (1, $(FEATURE.numa))
+    CLI.GCC.l += numa
+endif
+else ifeq ($(HOST.system),kfreebsd)
+    CLI.GCC.l += pthread dl m
+else ifneq (,$(filter $(HOST.system),freebsd netbsd))
+    CLI.GCC.L += $(LOCALBASE)/lib
+    CLI.GCC.l += pthread m
+else ifeq ($(HOST.system),solaris)
+    CLI.GCC.l += pthread nsl socket
+ifneq (,$(filter $(HOST.release),2.10))
+    CLI.GCC.l += iconv
+endif
+    CLI.GCC.D += _POSIX_C_SOURCE=200112L __EXTENSIONS__
+else ifeq (1-mingw,$(HOST.cross)-$(HOST.system))
+ifeq ($(HAS.dlfcn),1)
+    CLI.GCC.l += dl
+endif
+ifeq (1,$(HAS.pthread))
+    CLI.GCC.l += pthread
+else
+    CLI.GCC.l += pthreadGC2
+endif
+    CLI.GCC.l += bcrypt iconv ws2_32 regex uuid ole32
+    CLI.GCC.D += PTW32_STATIC_LIB
+    CLI.GCC.args.extra.exe++ += -static
+endif #   (1-mingw,$(HOST.cross)-$(HOST.system))
