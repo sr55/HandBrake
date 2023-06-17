@@ -60,6 +60,7 @@ jobs:
         export PATH=/usr/bin:$PATH
         ./configure --cross=x86_64-w64-mingw32 --enable-qsv --enable-vce --enable-nvenc --enable-nvdec --launch-jobs=0 --launch
         cd build
+        cargo update --manifest-path="./contrib/libdovi/dovi_tool-libdovi-3.1.2/dolby_vision/Cargo.toml"
         make pkg.create.zip
 
     - name: Upload HandBrakeCLI
