@@ -4,6 +4,7 @@ $(eval $(call import.CONTRIB.defs,LIBDOVI))
 LIBDOVI.FETCH.url      = https://github.com/HandBrake/HandBrake-contribs/releases/download/contribs2/dovi_tool-libdovi-3.3.0_vendor.tar.gz
 LIBDOVI.FETCH.sha256   = a0b10fcdd51c1268d1ffb210fd5cfe1079db8f349a330be5605e386067d46ed6
 LIBDOVI.FETCH.basename = dovi_tool-libdovi-3.3.0_vendor.tar.gz
+LIBDOVI.EXTRACT.tarbase = dovi_tool-libdovi-3.3.0
 
 define LIBDOVI.CONFIGURE
      cd $(LIBDOVI_DV.dir); $(CARGO.exe) fetch
